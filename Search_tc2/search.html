@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+	<title>搜索筛选_山东科技大学-录课平台</title>
+	<style>
+		span{display:inline-block; width: 5em;}
+		ul{list-style:none;padding-left: 20px;}
+		button{width: 8em;height: 2em;margin:0 auto;display:inline-block;font-size: 20px;font-weight:bold;margin-bottom: 1em;}		
+		.test{visibility: hidden;}
+		input{height: 32px;width: 448px;font-size: 20px;}
+		.center{margin:0 auto;width: 28em;}
+		.title{text-align: center;font-weight:bold;}
+		body{font-size: 150%;}
+		.course{width: 28em;}
+		a.course{font-size:larger;font-weight:bold;}
+		.label{margin: 1em;}
+	</style>
+</head>
+
+<body>
+	<div class="center">
+	<div class="title">输入关键字</div>
+	<!-- <input type="text" id="key" name="key" required> -->
+	<ul>
+		<li>
+			<div class="label"><span>课程名称</span><input type="text" id="name" name="name" value="" required></div>
+		</li>
+		<li>
+			<div class="label"><span>授课老师</span><input type="text" id="teacher" name="teacher" value="" required></div>
+		</li>
+		<li>
+			<div class="label"><span>录制时间</span><input type="text" id="time" name="time" value="" required></div>
+		</li>
+		<li>
+			<div class="label"><span>楼号教室</span><input type="text" id="room_name" name="room_name" value="" required></div>
+		</li>
+	</ul>
+</div>
+	<div class="title">
+		<button type="button" class="test" onclick="select()">add</button>
+		<span id="loading"></span>
+		<button type="button" id="get" onclick="main()">筛选</button>
+		<button type="button" class="test" onclick="deleteChild()">remove</button>
+	</div>
+	<div class="center" id="list">
+		<div class="test course">
+			<hr>
+			<a href="http://127.0.0.1" target="_blank" class="course">测试标题</a>
+			<p>主讲人: &nbsp; 测试人</p>
+			<p>时&nbsp;&nbsp;&nbsp;间: &nbsp; 2022-5-20 14:00:00 - 16:00:00</p>
+			<p>教&nbsp;&nbsp;&nbsp;室: &nbsp; J1-111室</p>
+		</div>
+	</div>
+</body>
+<script>
+	let course_json;
+	//let btn = document.getElementById("btn").onclick = function(){deleteChild();}
+	function main() {
+		// 全局变量
+		// key = document.getElementById("key").value;
+		iname = document.getElementById("name").value;
+		iteacher = document.getElementById("teacher").value;
+		itime = document.getElementById("time").value;
+		iroom_name = document.getElementById("room_name").value;
+		if (iname) { request(iname) }
+		else if (iteacher) { request(iteacher) }
+		else if (itime) { request(itime) }
+		else if (iroom_name) { request(iroom_name) }
+		else { alert("请输入内容!"); }
+	}
+
+	function request(key) {
+		if (key) {
+			loading(true);
+			document.getElementById('get').disabled = true;
+			let xhr = new XMLHttpRequest();
+
+			// 创建请求(方法,链接,是否异步)
+			xhr.open("GET", "http://tc2.sdust.edu.cn:8084/public-api/resources?page_size=999999&page=1&conditions=%7B%22name%22%3A%22" + key + "%22%7D", true);
+			// 提交GET请求
+			xhr.send(null);
+			// xhr.onreadystatechange = function () { console.log(xhr.responseText); }	// 回调函数
+			xhr.onreadystatechange = function () {
+				course_json = JSON.parse(xhr.responseText)["resources"];	//["end"] 数量
+				
+				document.getElementById('get').disabled = false;
+				deleteChild();
+				select();
+				loading(false);
+				}
+		}
+		else {
+			alert("请输入内容!");
+		}
+	}
+
+	function deleteChild() {
+		// document.getElementById('list').innerHTML = "";
+		let e = document.getElementById('list');
+		let child = e.lastElementChild;
+		while (child) {
+			e.removeChild(child);
+			child = e.lastElementChild;
+		}
+	}
+
+	function shiftTime(start_time, end_time){
+		return start_time.substring(0,10) + "&nbsp;&nbsp;" + start_time.substring(11,19) + "&nbsp;-&nbsp;" + end_time.substring(11,19)
+	}
+
+	function select(){
+		console.log([iname, iteacher, itime, iroom_name]);
+		for(var p in course_json){
+			let id = course_json[p]["id"];						// 课程id,录课网址http://tc2.sdust.edu.cn:8084/#/resources/{id}
+			let name = course_json[p]["name"];					// 课程名称
+			let teacher = String(course_json[p]["replay"]["instructor_names"]);	// 授课老师,为数组,不一定为一个老师
+			// course_json[p]["replay"]["course"]["code"];		// 课程代码,可能没有code
+			let time = shiftTime(course_json[p]["replay"]["start_time"], course_json[p]["replay"]["end_time"]);//录制时间
+			let room_name = course_json[p]["replay"]["room"]["room_name"];	// 教室
+
+			// console.log([name, teacher, time, room_name]);
+			// console.log(name.includes(iname),  teacher.includes(iteacher), time.includes(itime),  room_name.includes(iroom_name));
+
+			// 筛选内容
+			if(name.includes(iname) &&  teacher.includes(iteacher) && time.includes(itime) &&  room_name.includes(iroom_name.toUpperCase())){
+				addACourse(id, name, teacher, time, room_name);
+				// console.log([id, name, teacher, time, room_name]);
+			}
+		}
+
+		if(document.getElementById("count")){document.getElementById("count").remove();}
+		let first = document.createElement("div");
+		first.setAttribute("id", "count");
+		first.innerHTML = "共找到&nbsp;" + document.getElementById('list').children.length + "&nbsp;个结果";
+		document.getElementById('list').insertBefore(first, document.getElementById('list').firstChild);
+	}
+
+	function addACourse(id, name, teacher, time, room_name) {
+		let d = document.createElement("div");
+		d.setAttribute("class", "course");
+
+		let d_name_a = document.createElement('a')
+		d_name_a.setAttribute("href", "http://tc2.sdust.edu.cn:8084/#/resources/" + id);
+		d_name_a.setAttribute("target", "_blank");
+		d_name_a.setAttribute("class", "course");
+		d_name_a.innerHTML = name;
+
+		let p_teacher = document.createElement("p");
+		p_teacher.innerHTML = "主讲人: &nbsp; " + teacher;
+		let p_time = document.createElement("p");
+		p_time.innerHTML = "时&nbsp;&nbsp;&nbsp;间: &nbsp; " + time;
+		let p_room_name = document.createElement("p");
+		p_room_name.innerHTML = "教&nbsp;&nbsp;&nbsp;室: &nbsp; " + room_name;
+
+		document.getElementById('list').appendChild(d);
+		last = document.getElementById('list').lastChild
+		last.appendChild(document.createElement("hr"));
+		last.appendChild(d_name_a);
+		last.appendChild(p_teacher);
+		last.appendChild(p_time);
+		last.appendChild(p_room_name);
+	}
+
+	function loading(bool_){
+		if(bool_){
+			console.log("加载中...");
+			document.getElementById('loading').innerHTML = "加载中...";
+		}
+		else{
+			console.log("加载完毕");
+			document.getElementById('loading').innerHTML = "";
+		}
+	}
+</script>
+</html>
