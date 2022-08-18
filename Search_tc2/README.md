@@ -4,4 +4,6 @@
 
 实现原理：选择第一个输入的关键词，一次性请求全部内容，按每个输入框的关键词进行筛选后，显示在网页中。
 
+### **注：请求的接口为 `http`，而 githubpage 为 `https`，需设置允许该网页的不安全内容才能运行，或下载 html 到本地，可直接运行**  
+
 前往网页：[搜索页](https://mlyde.github.io/HTML/Search_tc2/search.html)  
