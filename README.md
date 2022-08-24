@@ -1,2 +1,7 @@
+# 一些静态 Html 页面，[Github Page](https://mlyde.github.io/).  
 
-__一些会用到的静态 html 页面，放在 github-pages 上方便使用，单独建个仓库方便管理。__
+## 录课平台搜素筛选  
+[https://mlyde.github.io/Search_tc2/search.html](https://mlyde.github.io/Search_tc2/search.html)  
+
+## 英语四级的部分单词短语  
+[https://mlyde.github.io/CET4/CET4.html](https://mlyde.github.io/CET4/CET4.html)  
