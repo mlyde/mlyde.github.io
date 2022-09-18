@@ -108,7 +108,10 @@
 	}
 
 	function shiftTime(start_time, end_time){
-		return start_time.substring(0,10) + "&nbsp;&nbsp;" + start_time.substring(11,19) + "&nbsp;-&nbsp;" + end_time.substring(11,19)
+		// 转换为实际时间
+		let start_hour = new Date(start_time).toLocaleTimeString();
+		let end_hour = new Date(end_time).toLocaleTimeString();
+		return start_time.substring(0,10) + "&nbsp;" + start_hour + "&nbsp;-&nbsp;" + end_hour;
 	}
 
 	function select(){
