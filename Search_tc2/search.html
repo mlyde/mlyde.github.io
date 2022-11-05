@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- api
+
+# 录播搜素关键词,获取"resource_id"
+http://tc2.sdust.edu.cn:8084/public-api/resources?page_size=10&page=1&conditions={"name":"KEYWORDS"}
+# 使用url的"resource_id"获取"replay_id"
+http://tc2.sdust.edu.cn:8084/public-api/resources/{resource_id}
+# 使用"replay_id"获取视频链接
+http://tc2.sdust.edu.cn:8084/public-api/replays/{replay_id}/videos?onlyNeedPub=false
+
+# 直播搜素关键词
+http://tc2.sdust.edu.cn:8084/public-api/lives?page_size=10&page=1&conditions={"name":"KEYWORDS","status":""}
+http://tc2.sdust.edu.cn:8084/public-api/lives/{ID}
+http://tc2.sdust.edu.cn:8084/public-api/lives/{ID}/streams
+-->
+
 <head>
 	<meta charset="UTF-8">
 	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
