@@ -6,4 +6,4 @@
 
 ### **注：请求的接口为 `http`，而 githubpage 为 `https`，需设置允许该网页的不安全内容才能运行，或下载 html 到本地，可直接运行**  
 
-前往网页：[搜索页](https://mlyde.github.io/HTML/Search_tc2/search.html)  
+前往网页：[搜索页](https://mlyde.github.io/Search_tc2/search.html)  
